@@ -76,6 +76,24 @@ namespace TheArtOfDev.HtmlRenderer.PdfSharp
             return GeneratePdf(html, config, cssData, stylesheetLoad, imageLoad);
         }
 
+
+        public static PdfDocument GeneratePdf(PdfDocument template, string html, PageSize pageSize, 
+                                                int margin = 20, CssData cssData = null, 
+                                                EventHandler<HtmlStylesheetLoadEventArgs> stylesheetLoad = null, 
+                                                EventHandler<HtmlImageLoadEventArgs> imageLoad = null)
+        {
+            var config = new PdfGenerateConfig();
+            config.PageSize = pageSize;
+            config.SetMargins(margin);
+
+            var document = new PdfDocument();
+
+            // add rendered PDF pages to document
+            AddPdfPages(template, document, html, config, cssData, stylesheetLoad, imageLoad);
+
+            return document;
+        }
+
         /// <summary>
         /// Create PDF document from given HTML.<br/>
         /// </summary>
@@ -115,17 +133,8 @@ namespace TheArtOfDev.HtmlRenderer.PdfSharp
             AddPdfPages(document, html, config, cssData, stylesheetLoad, imageLoad);
         }
 
-        /// <summary>
-        /// Create PDF pages from given HTML and appends them to the provided PDF document.<br/>
-        /// </summary>
-        /// <param name="document">PDF document to append pages to</param>
-        /// <param name="html">HTML source to create PDF from</param>
-        /// <param name="config">the configuration to use for the PDF generation (page size/page orientation/margins/etc.)</param>
-        /// <param name="cssData">optional: the style to use for html rendering (default - use W3 default style)</param>
-        /// <param name="stylesheetLoad">optional: can be used to overwrite stylesheet resolution logic</param>
-        /// <param name="imageLoad">optional: can be used to overwrite image resolution logic</param>
-        /// <returns>the generated image of the html</returns>
-        public static void AddPdfPages(PdfDocument document, string html, PdfGenerateConfig config, CssData cssData = null, EventHandler<HtmlStylesheetLoadEventArgs> stylesheetLoad = null, EventHandler<HtmlImageLoadEventArgs> imageLoad = null)
+
+        public static void AddPdfPages(PdfDocument template, PdfDocument document, string html, PdfGenerateConfig config, CssData cssData = null, EventHandler<HtmlStylesheetLoadEventArgs> stylesheetLoad = null, EventHandler<HtmlImageLoadEventArgs> imageLoad = null)
         {
             XSize orgPageSize;
             // get the size of each page to layout the HTML in
@@ -170,7 +179,19 @@ namespace TheArtOfDev.HtmlRenderer.PdfSharp
                     double scrollOffset = 0;
                     while (scrollOffset > -container.ActualSize.Height)
                     {
-                        var page = document.AddPage();
+                        PdfPage page;
+
+                        if (template != null)
+                        {
+                            var templatePage = template.Pages[0];
+                            page = document.AddPage(templatePage);
+                        }
+                        else
+                        {
+                            page = document.AddPage();
+                        }
+
+
                         page.Height = orgPageSize.Height;
                         page.Width = orgPageSize.Width;
 
@@ -189,6 +210,21 @@ namespace TheArtOfDev.HtmlRenderer.PdfSharp
                     HandleLinks(document, container, orgPageSize, pageSize);
                 }
             }
+        }
+
+        /// <summary>
+        /// Create PDF pages from given HTML and appends them to the provided PDF document.<br/>
+        /// </summary>
+        /// <param name="document">PDF document to append pages to</param>
+        /// <param name="html">HTML source to create PDF from</param>
+        /// <param name="config">the configuration to use for the PDF generation (page size/page orientation/margins/etc.)</param>
+        /// <param name="cssData">optional: the style to use for html rendering (default - use W3 default style)</param>
+        /// <param name="stylesheetLoad">optional: can be used to overwrite stylesheet resolution logic</param>
+        /// <param name="imageLoad">optional: can be used to overwrite image resolution logic</param>
+        /// <returns>the generated image of the html</returns>
+        public static void AddPdfPages(PdfDocument document, string html, PdfGenerateConfig config, CssData cssData = null, EventHandler<HtmlStylesheetLoadEventArgs> stylesheetLoad = null, EventHandler<HtmlImageLoadEventArgs> imageLoad = null)
+        {
+            AddPdfPages(null, document, html, config, cssData, stylesheetLoad, imageLoad);
         }
 
 
