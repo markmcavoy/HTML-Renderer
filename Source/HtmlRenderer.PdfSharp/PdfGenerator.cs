@@ -77,6 +77,19 @@ namespace TheArtOfDev.HtmlRenderer.PdfSharp
         }
 
 
+        /// <summary>
+        /// Create PDF document from given HTML.
+        /// <para>This also take a template document that will be used to overlay the HTML onto
+        /// this allows for a corporate look and feel to the PDFs</para>
+        /// </summary>
+        /// <param name="template">PDFDocument containing the template, if not required set to null</param>
+        /// <param name="html"></param>
+        /// <param name="pageSize"></param>
+        /// <param name="margin"></param>
+        /// <param name="cssData"></param>
+        /// <param name="stylesheetLoad"></param>
+        /// <param name="imageLoad"></param>
+        /// <returns></returns>
         public static PdfDocument GeneratePdf(PdfDocument template, string html, PageSize pageSize, 
                                                 int margin = 20, CssData cssData = null, 
                                                 EventHandler<HtmlStylesheetLoadEventArgs> stylesheetLoad = null, 
@@ -134,6 +147,16 @@ namespace TheArtOfDev.HtmlRenderer.PdfSharp
         }
 
 
+        /// <summary>
+        /// Create PDF pages from given HTML and appends them to the provided PDF document
+        /// </summary>
+        /// <param name="template">template to use for the page, if null just make a blank page</param>
+        /// <param name="document"></param>
+        /// <param name="html"></param>
+        /// <param name="config"></param>
+        /// <param name="cssData"></param>
+        /// <param name="stylesheetLoad"></param>
+        /// <param name="imageLoad"></param>
         public static void AddPdfPages(PdfDocument template, PdfDocument document, string html, PdfGenerateConfig config, CssData cssData = null, EventHandler<HtmlStylesheetLoadEventArgs> stylesheetLoad = null, EventHandler<HtmlImageLoadEventArgs> imageLoad = null)
         {
             XSize orgPageSize;
