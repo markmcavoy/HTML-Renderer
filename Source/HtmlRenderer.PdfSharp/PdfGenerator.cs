@@ -108,6 +108,31 @@ namespace TheArtOfDev.HtmlRenderer.PdfSharp
         }
 
         /// <summary>
+        /// create a PDF document from a template
+        /// </summary>
+        /// <param name="template"></param>
+        /// <param name="html"></param>
+        /// <param name="config"></param>
+        /// <param name="cssData"></param>
+        /// <param name="stylesheetLoad"></param>
+        /// <param name="imageLoad"></param>
+        /// <returns></returns>
+        public static PdfDocument GeneratePdf(PdfDocument template, 
+                                                string html,
+                                                PdfGenerateConfig config, 
+                                                CssData cssData = null,
+                                                EventHandler<HtmlStylesheetLoadEventArgs> stylesheetLoad = null,
+                                                EventHandler<HtmlImageLoadEventArgs> imageLoad = null)
+        {
+            var document = new PdfDocument();
+
+            // add rendered PDF pages to document
+            AddPdfPages(template, document, html, config, cssData, stylesheetLoad, imageLoad);
+
+            return document;
+        }
+
+        /// <summary>
         /// Create PDF document from given HTML.<br/>
         /// </summary>
         /// <param name="html">HTML source to create PDF from</param>
@@ -116,7 +141,11 @@ namespace TheArtOfDev.HtmlRenderer.PdfSharp
         /// <param name="stylesheetLoad">optional: can be used to overwrite stylesheet resolution logic</param>
         /// <param name="imageLoad">optional: can be used to overwrite image resolution logic</param>
         /// <returns>the generated image of the html</returns>
-        public static PdfDocument GeneratePdf(string html, PdfGenerateConfig config, CssData cssData = null, EventHandler<HtmlStylesheetLoadEventArgs> stylesheetLoad = null, EventHandler<HtmlImageLoadEventArgs> imageLoad = null)
+        public static PdfDocument GeneratePdf(string html, 
+                                                PdfGenerateConfig config, 
+                                                CssData cssData = null, 
+                                                EventHandler<HtmlStylesheetLoadEventArgs> stylesheetLoad = null, 
+                                                EventHandler<HtmlImageLoadEventArgs> imageLoad = null)
         {
             // create PDF document to render the HTML into
             var document = new PdfDocument();
